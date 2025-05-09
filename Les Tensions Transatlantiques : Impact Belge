@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Interactif : Tensions Transatlantiques - Impact Belge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1a202c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .presentation-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 950px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide {
+            display: none;
+            padding: 30px 40px;
+            min-height: 520px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-main-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .slide-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        .slide-subtitle {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .points-cles-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .points-cles ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            color: #4a5568;
+        }
+        .points-cles li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .image-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e2e8f0;
+            color: #718096;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            font-style: italic;
+            min-height: 150px;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background-color: #edf2f7;
+            border-top: 1px solid #e2e8f0;
+        }
+        .nav-button {
+            background-color: #3182ce;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .nav-button:hover {
+            background-color: #2b6cb0;
+        }
+        .nav-button:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            height: 10px;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 10px;
+            background-color: #4299e1;
+            border-radius: 4px;
+            transition: width 0.3s ease-in-out;
+        }
+        .slide-counter {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 15px;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #edf2f7;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        td ul {
+            list-style-position: inside;
+            padding-left: 0;
+        }
+
+        /* Styles pour le Quiz */
+        .quiz-question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .quiz-question p {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        .quiz-options label {
+            display: block;
+            background-color: #fff;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .quiz-options label:hover {
+            background-color: #eff6ff;
+            border-color: #93c5fd;
+        }
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #3b82f6;
+        }
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .quiz-feedback.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .quiz-feedback.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .submit-quiz-button {
+            background-color: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        .submit-quiz-button:hover {
+            background-color: #1d4ed8;
+        }
+        #quizScore {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div id="slideCounter" class="slide-counter">Diapositive 1 / 11</div>
+
+        <div id="slide1" class="slide active">
+            <h1 class="slide-main-title">Les Tensions Transatlantiques : Impact Belge</h1>
+            <p class="slide-subtitle text-center">
+                Les tarifs américains ont déclenché une riposte de l'Union Européenne.
+                La Belgique est particulièrement affectée par ces tensions commerciales.
+                L'analyse se concentre sur les événements de début 2025.
+                L'économie belge fait face à des enjeux importants en 2025.
+                Nous examinerons l'impact de ces tensions en mai 2025.
+            </p>
+            <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
+                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                </svg>
+                <span class="ml-3">[Image de présentation générale - Diapositive 1]</span>
+            </div>
+        </div>
+
+        <div id="slide2" class="slide">
+            <h2 class="slide-title">Chocs Transatlantiques: Impact Belge</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>Analyse des tensions transatlantiques de mars à mai 2025.</li>
+                    <li>Impact économique en Belgique suite aux tarifs douaniers américains.</li>
+                    <li>Réponse de l'Union Européenne aux tensions commerciales de 2025.</li>
+                    <li>Conséquences des tarifs douaniers sur les échanges commerciaux belges.</li>
+                    <li>Situation actuelle des relations commerciales UE-États-Unis et Belgique.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707zm0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707zm-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707z"/>
+                </svg>
+                <span class="ml-3">[Image illustrant l'impact global - Diapositive 2]</span>
+            </div>
+        </div>
+
+        <div id="slide3" class="slide">
+            <h2 class="slide-title">Offensive Tarifaire US : Mars-Avril 2025</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>Les tarifs sur l'acier et l'aluminium débutent le 12 mars.</li>
+                    <li>Les tarifs sur les automobiles et pièces suivent le 3 avril.</li>
+                    <li>Un tarif universel de 10% est appliqué le 5 avril.</li>
+                    <li>Les tarifs réciproques élargis visent l'UE le 9 avril.</li>
+                    <li>Des enquêtes ciblent les secteurs pharmaceutiques et semi-conducteurs.</li>
+                </ul>
+            </div>
+             <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-globe-americas" viewBox="0 0 16 16">
+                    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484-.03.028-.11.11-.11.213v.423c0 .114.01.238.021.358.087.945.23 1.808.348 2.591L6 12l-1.438.793V12.52c0-.246-.043-.48-.12-.704-.08-.226-.195-.428-.34-.596-.608-.696-1.446-1.072-2.688-1.072C.61 10.144 0 9.35 0 8.314 0 7.166.742 6.33 1.438 6.126c.262-.078.648-.23.919-.386.27-.156.425-.285.425-.364 0-.07-.084-.148-.23-.241a13.342 13.342 0 0 1-.688-.566c-.645-.645-.227-1.516.192-2.078a5.498 5.498 0 0 1 .926-.661Z"/>
+                    <path d="M12.255 7.386C11.064 6.73 8.852 5.517 7.67 4.868c-.478-.26-.79-.433-.74-.483.03-.029.11-.111.11-.214v-.423c0-.114-.01-.238-.021-.358a6.17 6.17 0 0 0-.349-2.59L6 0l1.438.793v.321c0 .246.043.48.12.704.08.226.195.428.34.596.608.696 1.446 1.072 2.688 1.072.99 0 1.738-.786 1.738-1.82 0-1.148-.743-1.974-1.438-2.188a4.889 4.889 0 0 0-.919-.385c-.27-.156-.425-.285-.425-.364 0-.07.084-.148.23-.241.232-.147.541-.339.688-.566.645-.645.227-1.516-.192-2.078a5.498 5.498 0 0 0-.926-.661l.037.019ZM14.96 3.674A1.042 1.042 0 0 1 15 3.59c.003-.095-.022-.19-.064-.278-.14-.293-.4-.542-.732-.728V2.52c0-.246-.043-.48-.12-.704-.08-.226-.195-.428-.34-.596-.608-.696-1.446-1.072-2.688-1.072-.99 0-1.738-.786-1.738-1.82 0-1.148-.743-1.974-1.438-2.188a4.889 4.889 0 0 0-.919-.385c-.27-.156-.425-.285-.425-.364 0-.07.084-.148.23-.241.232-.147.541-.339.688-.566.645-.645.227-1.516-.192-2.078a5.498 5.498 0 0 0-.926-.661l.037.019a8.008 8.008 0 0 0-.074 12.224l.204.105c.26.132.596.291.943.472.405.208.88.459 1.23.757.686.59 1.003 1.42.037 2.207-.627.513-1.072.7-1.22.732-.17-.021-.24-.061-.24-.083v-.003a1.033 1.033 0 0 0-.04-.146 1.03 1.03 0 0 0-.09-.21 1.03 1.03 0 0 0-.13-.211 1.017 1.017 0 0 0-.19-.228c-.27-.24-.7-.24-1.03-.24-.32 0-.65.009-.86.017-.18.008-.35.016-.51.024a4.24 4.24 0 0 0-.51.039 4.24 4.24 0 0 0-.49.051 4.24 4.24 0 0 0-.46.069 4.24 4.24 0 0 0-.42.084 4.24 4.24 0 0 0-.38.102l-.02.007a1.017 1.017 0 0 0-.19.228 1.03 1.03 0 0 0-.13.211 1.03 1.03 0 0 0-.09.21 1.033 1.033 0 0 0-.04.146v.003c0 .022.07.062.24.083.148-.032.593-.219 1.22-.732.966-.787.649-1.617-.037-2.207-.35-.298-.825-.549-1.23-.757a14.91 14.91 0 0 1-.943-.472l-.204-.105A7.963 7.963 0 0 0 8 16a7.963 7.963 0 0 0 6.96-3.674Z"/>
+                </svg>
+                <span class="ml-3">[Image de carte du monde / tarifs - Diapositive 3]</span>
+            </div>
+        </div>
+
+        <div id="slide4" class="slide">
+            <h2 class="slide-title">Réplique Européenne : Rigueur et Négociation</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>Réaction initiale : "Profonds regrets" de l'UE.</li>
+                    <li>Contre-mesures annulées pour une riposte globale.</li>
+                    <li>Tarifs de l'UE de 25% initialement prévus.</li>
+                    <li>Suspension des tarifs de représailles pour 90 jours.</li>
+                    <li>Préparation de nouvelles contre-mesures par l'UE.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                    <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                </svg>
+                <span class="ml-3">[Image de négociation UE - Diapositive 4]</span>
+            </div>
+        </div>
+
+        <div id="slide5" class="slide">
+            <h2 class="slide-title">Stratégie : Pause et Négociation Avril 2025</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>Suspension temporaire des tarifs début avril.</li>
+                    <li>UE suspend ses tarifs de 25% pour 90 jours.</li>
+                    <li>USA suspend tarifs élargis au-delà de 10%.</li>
+                    <li>Objectif de négociations et accord "zéro-pour-zéro".</li>
+                    <li>Risque de réactivation des mesures après mi-juillet.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-pause-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.25 5C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5zm3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5z"/>
+                </svg>
+                <span class="ml-3">[Image de pause/négociation - Diapositive 5]</span>
+            </div>
+        </div>
+
+        <div id="slide6" class="slide">
+            <h2 class="slide-title">Économie Belge : Vulnérabilité Transatlantique</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>L'économie belge est fortement ouverte et orientée vers l'exportation.</li>
+                    <li>Les USA sont le 1er client hors UE de la Belgique.</li>
+                    <li>Les exportations belges vers les USA ont atteint 28 milliards € en 2023.</li>
+                    <li>Les secteurs de l'acier et de l'aluminium sont directement visés par tarifs.</li>
+                    <li>L'automobile et les produits pharmaceutiques sont particulièrement vulnérables.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+                    <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                </svg>
+                <span class="ml-3">[Image de port/exportations belges - Diapositive 6]</span>
+            </div>
+        </div>
+
+        <div id="slide7" class="slide">
+            <h2 class="slide-title">Chocs Belges : Réponses et Enjeux</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>Forte inquiétude exprimée par les entreprises belges.</li>
+                    <li>L'UE doit agir de manière proportionnée.</li>
+                    <li>Les chaînes d'approvisionnement sont complexifiées.</li>
+                    <li>Augmentation des coûts de conformité douanière.</li>
+                    <li>L'AWEX soutient les entreprises belges.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"/>
+                </svg>
+                <span class="ml-3">[Image d'analyse économique/entreprises - Diapositive 7]</span>
+            </div>
+        </div>
+
+        <div id="slide8" class="slide">
+            <h2 class="slide-title">Tableau Synthèse – Exposition de Secteurs Belges Clés</h2>
+            <p class="slide-subtitle">
+                Ce tableau actualisé synthétise l'exposition de secteurs belges clés.
+                Il met en évidence l'impact direct des tarifs américains sur l'acier, l'aluminium et l'automobile.
+                Il souligne également le risque lié au tarif universel de 10% et aux enquêtes en cours sur des secteurs vitaux comme les produits pharmaceutiques.
+            </p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Secteur Belge Clé</th>
+                            <th>Principaux Produits Exportés vers US (Exemples)</th>
+                            <th>Vulnérabilité aux Tarifs US (Type, Taux)</th>
+                            <th>Impacts Anticipés (Exemples)</th>
+                            <th>Réactions/Préoccupations des Fédérations (FEB, Agoria, Essenscia)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Chimie & Pharmacie</td>
+                            <td>Produits pharmaceutiques, produits chimiques de base et spécialisés</td>
+                            <td>Potentiellement tarifs réciproques (10%), incertitude sur exemptions</td>
+                            <td>Baisse de compétitivité, perturbation des chaînes d'approvisionnement, réévaluation des investissements.</td>
+                            <td>Essenscia: "handicap concurrentiel supplémentaire", impact négatif sur l'économie mondiale et la position concurrentielle.</td>
+                        </tr>
+                        <tr>
+                            <td>Acier & Aluminium</td>
+                            <td>Produits sidérurgiques, profilés en aluminium</td>
+                            <td>Tarifs directs de 25%</td>
+                            <td>Perte de parts de marché, réduction de la production, impact sur l'emploi.</td>
+                            <td>FEB: forte préoccupation.</td>
+                        </tr>
+                        <tr>
+                            <td>Automobile</td>
+                            <td>Composants automobiles, véhicules (potentiel)</td>
+                            <td>Tarifs de 25% sur véhicules et pièces</td>
+                            <td>Baisse des exportations de composants, impact sur les assembleurs potentiels.</td>
+                            <td>FEB: forte préoccupation. La situation d'Audi Brussels illustre les défis du secteur.</td>
+                        </tr>
+                        <tr>
+                            <td>Technologie</td>
+                            <td>Équipements électroniques, logiciels, services</td>
+                            <td>Potentiellement tarifs réciproques (10%), impact antérieur estimé à >1 milliard EUR de droits</td>
+                            <td>Augmentation des coûts pour les exportateurs, perte de compétitivité.</td>
+                            <td>Agoria: préoccupations antérieures significatives. Nécessité de suivre l'évolution (informations spécifiques pour mars-mai 2025 limitées).</td>
+                        </tr>
+                        <tr>
+                            <td>Agroalimentaire</td>
+                            <td>Bières, chocolats, produits transformés</td>
+                            <td>Potentiellement tarifs réciproques (10%), effets indirects des contre-mesures UE.</td>
+                            <td>Frein à la croissance des exportations, perturbation des flux.</td>
+                            <td>FEB: préoccupation générale sur les tarifs.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+             <div class="image-placeholder mt-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-table" viewBox="0 0 16 16">
+                    <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/>
+                </svg>
+                <span class="ml-3">[Représentation visuelle du tableau - Diapositive 8]</span>
+            </div>
+        </div>
+
+        <div id="slide9" class="slide">
+            <h2 class="slide-title">Incertitudes Commerciales: Belgique Mai 2025</h2>
+            <div class="points-cles">
+                <ul>
+                    <li>Volatilité persiste malgré la pause des négociations en mai 2025.</li>
+                    <li>Enjeux majeurs pour la Belgique et nécessité d'une vigilance accrue.</li>
+                    <li>Issue incertaine des négociations, échéance mi-juillet 2025.</li>
+                    <li>Dialogue transatlantique et unité européenne sont des impératifs.</li>
+                    <li>Risque d'une guerre commerciale froide à plus long terme.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-cloud-haze2-fill" viewBox="0 0 16 16">
+                    <path d="M8.5 3a4.002 4.002 0 0 0-3.8 2.745.5.5 0 1 1-.949-.316A5.002 5.002 0 0 1 13.5 5.5a.5.5 0 0 1-1 0 4.002 4.002 0 0 0-3.8-2.745zM1.21 7.572A.5.5 0 0 1 1.5 7.5h13a.5.5 0 0 1 .29.928l-13 4A.5.5 0 0 1 1 12.5V8a.5.5 0 0 1 .21-.428zM0 10.5A.5.5 0 0 1 .5 10h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0 2A.5.5 0 0 1 .5 12h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+                <span class="ml-3">[Image d'incertitude/marché - Diapositive 9]</span>
+            </div>
+        </div>
+        
+        <div id="slide10" class="slide">
+            <h2 class="slide-title">Quiz Rapide : Testez vos connaissances !</h2>
+            <form id="quizForm">
+                <div class="quiz-question">
+                    <p>1. Quel a été le premier secteur touché par les tarifs US de 25% en mars 2025 ?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q1" value="a"> A) Automobiles</label>
+                        <label><input type="radio" name="q1" value="b"> B) Acier & Aluminium</label>
+                        <label><input type="radio" name="q1" value="c"> C) Produits pharmaceutiques</label>
+                        <label><input type="radio" name="q1" value="d"> D) Produits agricoles</label>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display:none;"></div>
+                </div>
+
+                <div class="quiz-question">
+                    <p>2. Pour combien de temps l'UE et les USA ont-ils suspendu leurs mesures de représailles en avril 2025 ?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q2" value="a"> A) 30 jours</label>
+                        <label><input type="radio" name="q2" value="b"> B) 60 jours</label>
+                        <label><input type="radio" name="q2" value="c"> C) 90 jours</label>
+                        <label><input type="radio" name="q2" value="d"> D) 120 jours</label>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display:none;"></div>
+                </div>
+
+                <div class="quiz-question">
+                    <p>3. Quel est le premier client de la Belgique en dehors de l'UE, mentionné comme ayant exporté pour 28 milliards € en 2023 ?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q3" value="a"> A) Chine</label>
+                        <label><input type="radio" name="q3" value="b"> B) Royaume-Uni</label>
+                        <label><input type="radio" name="q3" value="c"> C) Suisse</label>
+                        <label><input type="radio" name="q3" value="d"> D) États-Unis</label>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display:none;"></div>
+                </div>
+                <button type="button" id="submitQuiz" class="submit-quiz-button">Soumettre le Quiz</button>
+                <div id="quizScore" style="display:none;"></div>
+            </form>
+        </div>
+
+        <div id="slide11" class="slide">
+            <h2 class="slide-title">Questions & Échanges</h2>
+            <div class="flex flex-col items-center justify-center h-full mt-10">
+                <svg class="w-24 h-24 text-blue-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4s-1.79 4-4 4c-1.742 0-3.223-.835-3.772-2M9 12H3m9 12V9M15 12H9m6 3h6m-6-3V9m0 6h.01M9 18h.01"></path></svg>
+                <p class="text-xl text-gray-700 text-center">
+                    Merci de votre attention. Place aux questions et à la discussion !
+                </p>
+            </div>
+        </div>
+
+
+        <div class="navigation-buttons">
+            <button id="prevButton" class="nav-button">Précédent</button>
+            <button id="nextButton" class="nav-button">Suivant</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        const submitQuizButton = document.getElementById('submitQuiz');
+
+        let currentSlide = 0;
+        // Le nombre total de diapositives est maintenant 11
+        const totalSlides = slides.length; 
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            const progressPercentage = ((index + 1) / totalSlides) * 100;
+            progressBar.style.width = progressPercentage + '%';
+            // Mise à jour du compteur de diapositives pour refléter le nombre total correct
+            slideCounter.textContent = `Diapositive ${index + 1} / ${totalSlides}`;
+
+            prevButton.disabled = index === 0;
+            nextButton.disabled = index === totalSlides - 1;
+
+            const presentationContainer = document.querySelector('.presentation-container');
+            if (presentationContainer) {
+                 presentationContainer.scrollTo(0, 0);
+            }
+             window.scrollTo(0,0);
+        }
+
+        nextButton.addEventListener('click', () => {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        });
+        
+        // Logique du Quiz
+        if (submitQuizButton) {
+            submitQuizButton.addEventListener('click', () => {
+                const answers = {
+                    q1: 'b', // Acier & Aluminium
+                    q2: 'c', // 90 jours
+                    q3: 'd'  // États-Unis
+                };
+                let score = 0;
+                const totalQuestions = Object.keys(answers).length;
+
+                for (const questionName in answers) {
+                    const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                    const feedbackEl = document.getElementById(`feedback-${questionName}`);
+                    
+                    if (selectedOption) {
+                        if (selectedOption.value === answers[questionName]) {
+                            score++;
+                            feedbackEl.textContent = "Correct !";
+                            feedbackEl.className = 'quiz-feedback correct';
+                        } else {
+                            feedbackEl.textContent = `Incorrect. La bonne réponse était ${answers[questionName].toUpperCase()}.`;
+                            feedbackEl.className = 'quiz-feedback incorrect';
+                        }
+                    } else {
+                        feedbackEl.textContent = "Veuillez sélectionner une réponse.";
+                        feedbackEl.className = 'quiz-feedback incorrect';
+                    }
+                    feedbackEl.style.display = 'block';
+                }
+
+                const quizScoreEl = document.getElementById('quizScore');
+                quizScoreEl.textContent = `Votre score : ${score} / ${totalQuestions}`;
+                quizScoreEl.style.display = 'block';
+                submitQuizButton.disabled = true; // Désactiver le bouton après soumission
+            });
+        }
+        
+        showSlide(currentSlide); // Affichage initial
+    </script>
+
+</body>
+</html>
+
